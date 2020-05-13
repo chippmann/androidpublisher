@@ -7,7 +7,7 @@ Contributions are very welcome!
 Look into [Getting started](GETTING_STARTED.md) section to get more information.
 
 ## Quick start
-This quick start guide assumes you have already setup a google service account and you've already published one app bundle release to the track you want to upload to. If not, read the [Getting started](GETTING_STARTED.md) section.
+This quick start guide assumes you have already setup a google service account and you've already published an app bundle release to the track you want to upload to. If not, read the [Getting started](GETTING_STARTED.md) section.
 
 Minimal gradle configuration:  
 *App `build.gradle.kts`:*
