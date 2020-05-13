@@ -41,3 +41,9 @@ Gradle example:
 ```shell script
 ./gradlew generateVersionCodeForRelease uploadReleaseToInternalTrack
 ```
+
+## Known limitations
+ - Only one versionCode for all app variants supported
+ - No release notes can be provided
+ 
+ These limitations will be addressed in future versions
