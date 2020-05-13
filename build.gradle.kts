@@ -17,7 +17,8 @@ gradlePlugin {
     plugins {
         create("androidpublisher") {
             id = "ch.hippmann.androidpublisher"
-            displayName = "Gradle plugin for publishing apps to the Google Play Store"
+            displayName = "Publish apps to the Google Play Store"
+            description = "Gradle plugin for publishing apps to the Google Play Store"
             implementationClass = "ch.hippmann.androidpublisher.plugin.AndroidPublisherPlugin"
         }
     }
