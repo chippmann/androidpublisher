@@ -9,7 +9,7 @@ This guide is simplified. For further information; look at googles documentation
 ![](docresources/enablePlayConsoleApi.png)
 4. Create a service account by clicking on `manage service accounts:`  
 ![](docresources/createServiceAccount.png)
-5. Create key's for the service account and store them somwhere safe yet accessible from your publishing environment:  
+5. Create json key's for the service account and store them somwhere safe yet accessible from your publishing environment:  
 ![](docresources/createKeys.png)
 
 ## Enable GooglePlayConsole API access for the service account:
