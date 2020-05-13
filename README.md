@@ -47,3 +47,51 @@ Gradle example:
  - No release notes can be provided
  
  These limitations will be addressed in future versions
+ 
+ ## Development
+ To be able to test the plugin with a local build, one needs to execute `publishToMavenLocal` and add the following to 
+ the top of his/hers `settings.gradle.kts` file:  
+ 
+ *Gradle KTS:*
+ ```kotlin
+ // without this doing:
+ //  plugin { id("ch.hippmann.androidpublisher") version "0.0.1-SNAPSHOT" }
+ // won't work  as gradle does not know how to map the plugin id to an actual artifact.
+ // this is only required when trying out local builds. Comment this out when trying out a plugin published
+ // in the gradle plugin portal.
+ pluginManagement {
+     repositories {
+         mavenLocal()
+         jcenter()
+         gradlePluginPortal()
+     }
+ 
+     resolutionStrategy.eachPlugin {
+         when (requested.id.id) {
+             "ch.hippmann.androidpublisher" -> useModule("ch.hippmann.androidpublisher:${requested.version}")
+         }
+     }
+ }
+
+```
+*Gradle groovy:*
+```groovy
+ // without this doing:
+ //  plugin { id "ch.hippmann.androidpublisher" version "0.0.1-SNAPSHOT" }
+ // won't work  as gradle does not know how to map the plugin id to an actual artifact.
+ // this is only required when trying out local builds. Comment this out when trying out a plugin published
+ // in the gradle plugin portal.
+pluginManagement {
+    repositories {
+        mavenLocal()
+        jcenter()
+        gradlePluginPortal()
+    }
+
+    resolutionStrategy.eachPlugin {
+        if (requested.id.id == "ch.hippmann.androidpublisher") {
+            useModule("ch.hippmann:androidpublisher:" + requested.version)
+        }
+    }
+}
+```
