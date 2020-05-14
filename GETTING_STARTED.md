@@ -14,8 +14,8 @@ Before you can publish your app bundles to the play store with this gradle plugi
  ## Configuration
  ```kotlin
 androidpublisher {
-    credentialsJsonFile = "path/to/your/service/account/credentials.json" // <- required: relative or absolute path to the credentials.json file for the service account
-    releaseNotesFile = "path/to/your/releaseNotes.csv" // <- optional: relative or absolute path to the releaseNotes.csv file for the service account. Defaults to <projectRootDir>/releaseNotes.csv
+    credentialsJsonFile = File("path/to/your/service/account/credentials.json") // <- required: relative or absolute path to the credentials.json file for the service account
+    releaseNotesFile = File("path/to/your/releaseNotes.csv") // <- optional: relative or absolute path to the releaseNotes.csv file for the service account. Defaults to <projectRootDir>/releaseNotes.csv
     shouldThrowIfNoReleaseNotes = true // <- optional, defaults true: defines whether an exception is thrown or not if no releaseNotes for the appVersionCode is found
     enableGenerateVersionCode = true // <- optional, defaults true: defines if the appVersionCode should be generated (read below)
     appVersionCodeKey = "yourCustomKey" // <- optional, defaults "appVersionCode": key under which the app's version code is stored in the gradle.properties file

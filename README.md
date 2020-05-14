@@ -14,11 +14,11 @@ Minimal gradle configuration:
 ```kotlin
 plugins {
     id("com.android.application")
-    id("ch.hippmann.androidpublisher") version "0.0.1"
+    id("ch.hippmann.androidpublisher") version "0.1.0"
 }
 
 androidpublisher {
-    credentialsJsonPath = "play-store-credentials.json"
+    credentialsJsonFile = File("path/to/your/service/account/credentials.json")
 }
 ```
 
