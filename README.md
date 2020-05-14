@@ -48,7 +48,7 @@ deploy:
 
 Gradle example:
 ```shell script
-./gradlew generateVersionCodeForRelease uploadReleaseToInternalTrack
+./gradlew generateVersionCodeForRelease && ./gradlew uploadReleaseToInternalTrack
 ```
 
 ## Known limitations
