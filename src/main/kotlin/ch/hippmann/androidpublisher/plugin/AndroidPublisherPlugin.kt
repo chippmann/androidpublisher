@@ -6,6 +6,7 @@ import ch.hippmann.androidpublisher.publisher.VersionCodeGenerator
 import com.android.build.gradle.AppExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
 import java.io.File
@@ -39,25 +40,30 @@ class AndroidPublisherPlugin : Plugin<Project> {
     ) {
         project.afterEvaluate {
             android.applicationVariants.forEach { applicationVariant ->
+                var generateVersionCodeTask: Task? = null
                 if (androidpublisher.enableGenerateVersionCode.get()) {
-                    project.tasks.register("generateVersionCodeFor${applicationVariant.name.capitalize()}") {
-                        group = TASK_GROUP
-                        doLast {
-                            VersionCodeGenerator.generateVersionCode(
-                                applicationVariant.applicationId,
-                                project.projectDir.absolutePath,
-                                applicationVariant.versionCode,
-                                androidpublisher.appVersionCodeKey.get(),
-                                androidpublisher.credentialsJsonFile.get()
-                            )
+                    generateVersionCodeTask =
+                        project.tasks.create("generateVersionCodeFor${applicationVariant.name.capitalize()}") {
+                            group = TASK_GROUP
+                            doLast {
+                                VersionCodeGenerator.generateVersionCode(
+                                    applicationVariant.applicationId,
+                                    project.projectDir.absolutePath,
+                                    applicationVariant.versionCode,
+                                    androidpublisher.appVersionCodeKey.get(),
+                                    androidpublisher.credentialsJsonFile.get()
+                                )
+                            }
                         }
-                    }
                 }
 
                 Track.values().map { it.toString() }.forEach { track ->
                     project.tasks.register("upload${applicationVariant.name.capitalize()}To${track.capitalize()}Track") {
                         group = TASK_GROUP
                         dependsOn(project.tasks.getByName("bundle${applicationVariant.name.capitalize()}"))
+                        if (generateVersionCodeTask != null) {
+                            dependsOn(generateVersionCodeTask)
+                        }
 
                         doLast {
                             println("INFO: outputFiles: ${applicationVariant.outputs}")
