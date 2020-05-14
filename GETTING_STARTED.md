@@ -14,7 +14,9 @@ Before you can publish your app bundles to the play store with this gradle plugi
  ## Configuration
  ```kotlin
 androidpublisher {
-    credentialsJsonPath = "path/to/your/service/account/credentials.json" // <- required: relative or absolute path to the credentials.json file for the service account
+    credentialsJsonFile = "path/to/your/service/account/credentials.json" // <- required: relative or absolute path to the credentials.json file for the service account
+    releaseNotesFile = "path/to/your/releaseNotes.csv" // <- optional: relative or absolute path to the releaseNotes.csv file for the service account. Defaults to <projectRootDir>/releaseNotes.csv
+    shouldThrowIfNoReleaseNotes = true // <- optional, defaults true: defines whether an exception is thrown or not if no releaseNotes for the appVersionCode is found
     enableGenerateVersionCode = true // <- optional, defaults true: defines if the appVersionCode should be generated (read below)
     appVersionCodeKey = "yourCustomKey" // <- optional, defaults "appVersionCode": key under which the app's version code is stored in the gradle.properties file
 } 
@@ -34,6 +36,21 @@ gradle.properties version=35
 
 results in 35+1 = 36
 ```
+
+### Release Notes
+If you don't want to supply any release notes, you have to set `shouldThrowIfNoReleaseNotes` to false. Otherwise it will
+ throw an exception if no release notes for the versionCode are present.  
+If you want to specify another location for the releaseNotes csv file or another name, you can set `releaseNotesFile` 
+to point to that file.  
+
+The format **hast to be** the following for the spreadsheet which you export as csv to work:
+
+| VersionCode | en-gb                       | de-ch               | otherLanguages       |
+|-------------|-----------------------------|---------------------|----------------------|
+| 1           | Some release notes in UTF-8 | Some text in german | Other languages text |
+| 2           | Some release notes in UTF-8 | Some text in german | Other languages text |
+|             |                             |                     |                      |
+
 
 ## Usage
 The plugin creates for each App flavour and build type two gradleTasks: `generateVersionCodeForX` and `uploadXToYTrack` 

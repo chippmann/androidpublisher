@@ -26,7 +26,15 @@ This requires the appVersionCode to be defined in `gradle.properties` with the k
 ```properties
 appVersionCode=23
 ```
+and a `releaseNotes.csv` file present in the rootProject dir with the following spreadsheet format:  
 
+| VersionCode | en-gb                       | de-ch               | otherLanguages       |
+|-------------|-----------------------------|---------------------|----------------------|
+| 1           | Some release notes in UTF-8 | Some text in german | Other languages text |
+| 2           | Some release notes in UTF-8 | Some text in german | Other languages text |
+|             |                             |                     |                      |
+
+\
 This configuration generates gradleTasks in the group `androidpublisher` which you can call through CI/CD or locally if you have the signing keys locally that you used for publishing the app on the google play store.  
 Travis example:
 ```yaml
@@ -44,13 +52,12 @@ Gradle example:
 
 ## Known limitations
  - Only one versionCode for all app variants supported
- - No release notes can be provided
  
- These limitations will be addressed in future versions
+ These limitations might get addressed in future versions
  
  ## Development
  To be able to test the plugin with a local build, one needs to execute `publishToMavenLocal` and add the following to 
- the top of his/hers `settings.gradle.kts` file:  
+ the top of the `settings.gradle.kts` file:  
  
  *Gradle KTS:*
  ```kotlin

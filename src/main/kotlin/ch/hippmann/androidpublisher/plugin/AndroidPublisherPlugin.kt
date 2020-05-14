@@ -8,6 +8,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
+import java.io.File
 
 private const val TASK_GROUP = "androidpublisher"
 
@@ -17,13 +18,15 @@ class AndroidPublisherPlugin : Plugin<Project> {
             val android = project.extensions.getByType<AppExtension>()
             val androidpublisher =
                 project.extensions.create<AndroidPublisherExtension>("androidpublisher", project.objects)
-            setupExtensionDefaults(androidpublisher)
+            setupExtensionDefaults(project, androidpublisher)
             setupAndroidPublisherPlugin(project, android, androidpublisher)
         }
     }
 
-    private fun setupExtensionDefaults(androidpublisher: AndroidPublisherExtension) {
+    private fun setupExtensionDefaults(project: Project, androidpublisher: AndroidPublisherExtension) {
         with(androidpublisher) {
+            releaseNotesFile.set(File("${project.rootDir.absolutePath}/releaseNotes.csv"))
+            shouldThrowIfNoReleaseNotes.set(true)
             enableGenerateVersionCode.set(true)
             appVersionCodeKey.set("appVersionCode")
         }
@@ -45,7 +48,7 @@ class AndroidPublisherPlugin : Plugin<Project> {
                                 project.projectDir.absolutePath,
                                 applicationVariant.versionCode,
                                 androidpublisher.appVersionCodeKey.get(),
-                                androidpublisher.credentialsJsonPath.get()
+                                androidpublisher.credentialsJsonFile.get()
                             )
                         }
                     }
@@ -74,7 +77,10 @@ class AndroidPublisherPlugin : Plugin<Project> {
                                 applicationVariant.applicationId,
                                 track,
                                 applicationVariant.buildType.isMinifyEnabled,
-                                androidpublisher.credentialsJsonPath.get()
+                                androidpublisher.credentialsJsonFile.get(),
+                                androidpublisher.releaseNotesFile.get(),
+                                applicationVariant.versionCode,
+                                androidpublisher.shouldThrowIfNoReleaseNotes.get()
                             )
                         }
                     }

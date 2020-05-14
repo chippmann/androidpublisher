@@ -11,7 +11,7 @@ object VersionCodeGenerator {
         baseFolder: String,
         gradleVersionCode: Int,
         appVersionCodeKey: String,
-        credentialsFile: String
+        credentialsFile: File
     ) {
         val playStoreVersionCode = PlayStore.getLatestVersionCode(packageName, credentialsFile)
         log("Play store version code: $playStoreVersionCode, gradle version code: $gradleVersionCode")

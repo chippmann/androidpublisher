@@ -1,6 +1,7 @@
 package ch.hippmann.androidpublisher.publisher
 
 import ch.hippmann.androidpublisher.log
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.FileContent
@@ -8,6 +9,7 @@ import com.google.api.client.http.HttpRequestInitializer
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.androidpublisher.AndroidPublisher
 import com.google.api.services.androidpublisher.AndroidPublisherScopes
+import com.google.api.services.androidpublisher.model.LocalizedText
 import com.google.api.services.androidpublisher.model.Track
 import com.google.api.services.androidpublisher.model.TrackRelease
 import java.io.File
@@ -22,7 +24,10 @@ object PlayStore {
         packageName: String,
         track: String,
         uploadMappingFile: Boolean,
-        credentialsFile: String
+        credentialsFile: File,
+        releaseNotesFile: File,
+        versionCode: Int,
+        shouldThrowIfNoReleaseNotes: Boolean
     ) {
         val edits = getAndroidPublisher(credentialsFile).Edits()
         val appEdit = edits
@@ -60,6 +65,7 @@ object PlayStore {
         val trackRelease = TrackRelease().apply {
             versionCodes = listOf(appBundleUpload.versionCode).map { it.toLong() }
             status = "completed"
+            releaseNotes = getReleaseNotesFromProject(releaseNotesFile, versionCode, shouldThrowIfNoReleaseNotes)
         }
 
         val trackModel = Track().apply {
@@ -78,7 +84,7 @@ object PlayStore {
             .log { "AppEdit with id ${it.id} has been committed" }
     }
 
-    internal fun getLatestVersionCode(packageName: String, credentialsFile: String): Int {
+    internal fun getLatestVersionCode(packageName: String, credentialsFile: File): Int {
         val androidPublisher = getAndroidPublisher(credentialsFile)
         val edits = androidPublisher.Edits()
 
@@ -95,10 +101,9 @@ object PlayStore {
         return appBundle.versionCode.log { "Latest uploaded version code for $packageName: $it" }
     }
 
-    private fun getAndroidPublisher(credentialsFile: String): AndroidPublisher {
+    private fun getAndroidPublisher(credentialsFile: File): AndroidPublisher {
         val newTrustedTransport = GoogleNetHttpTransport.newTrustedTransport()
-        val resourceAsStream = File::class.java.getResourceAsStream(credentialsFile)
-        val credential = GoogleCredential.fromStream(resourceAsStream)
+        val credential = GoogleCredential.fromStream(credentialsFile.inputStream())
             .createScoped(listOf(AndroidPublisherScopes.ANDROIDPUBLISHER)) //TODO: replace with https://github.com/googleapis/google-auth-library-java
         return AndroidPublisher.Builder(
             newTrustedTransport,
@@ -116,6 +121,45 @@ object PlayStore {
             requestInitializer.initialize(httpRequest)
             httpRequest.connectTimeout = 2 * 60000 // 2 minutes connect timeout
             httpRequest.readTimeout = 2 * 60000 // 2 minutes read timeout
+        }
+    }
+
+    private fun getReleaseNotesFromProject(
+        releaseNotesFile: File,
+        versionCode: Int,
+        shouldThrowIfNoReleaseNotes: Boolean
+    ): List<LocalizedText>? {
+        return if (releaseNotesFile.exists() && releaseNotesFile.extension == "csv") {
+            csvReader()
+                .readAllWithHeader(releaseNotesFile)
+                .map { row ->
+                    val version = row.values.first()
+                    val releaseNotes = row
+                        .entries
+                        .filterIndexed { index, _ -> index != 0 }
+                        .map { languageToReleaseNote ->
+                            LocalizedText().apply {
+                                language = languageToReleaseNote.key
+                                text = languageToReleaseNote.value
+                            }
+                        }
+                    log("Found release notes for version $version with languages: ${releaseNotes.map { it.language }}")
+                    Pair(version, releaseNotes)
+                }
+                .toMap()[versionCode.toString()]
+                ?: if (shouldThrowIfNoReleaseNotes) {
+                    throw IllegalStateException("There are no release notes present for the AppVersion $versionCode! Looked in File $releaseNotesFile")
+                } else {
+                    log("No release notes found for version $versionCode! Continuing with no release notes as configured...")
+                    null
+                }
+        } else {
+            if (shouldThrowIfNoReleaseNotes) {
+                throw IllegalStateException("There are no release notes present for the AppVersion $versionCode! Looked in File $releaseNotesFile")
+            } else {
+                log("No release notes found for version $versionCode! Continuing with no release notes as configured...")
+                null
+            }
         }
     }
 }

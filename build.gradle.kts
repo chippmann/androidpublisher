@@ -43,6 +43,7 @@ dependencies {
     implementation(kotlin("gradle-plugin-api"))
     compileOnly("com.android.tools.build:gradle:3.6.2")
     implementation("com.google.apis:google-api-services-androidpublisher:v3-rev20200331-1.30.9")
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:0.7.3")
 }
 
 tasks {
