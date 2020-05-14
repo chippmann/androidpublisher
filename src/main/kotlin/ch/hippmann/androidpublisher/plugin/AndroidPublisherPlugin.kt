@@ -48,7 +48,7 @@ class AndroidPublisherPlugin : Plugin<Project> {
                             doLast {
                                 VersionCodeGenerator.generateVersionCode(
                                     applicationVariant.applicationId,
-                                    project.projectDir.absolutePath,
+                                    project.rootDir.absolutePath,
                                     applicationVariant.versionCode,
                                     androidpublisher.appVersionCodeKey.get(),
                                     androidpublisher.credentialsJsonFile.get()
