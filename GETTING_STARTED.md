@@ -61,4 +61,8 @@ Example:
 `uploadProductionReleaseToInternalTrack`
 
 These tasks can then be used in your CI/CD setup or triggered manually (as long as the apps signing information is on 
-your local dev machine).
+your local dev machine).  
+
+**Note:**  
+It is necessary to separate the `generateVersionCodeForRelease` task from the `uploadReleaseToInternalTrack` task. 
+Otherwise gradle can't pick up the changed versionCode

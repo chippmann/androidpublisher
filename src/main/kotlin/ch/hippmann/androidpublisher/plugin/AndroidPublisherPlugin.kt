@@ -1,12 +1,12 @@
 package ch.hippmann.androidpublisher.plugin
 
+import ch.hippmann.androidpublisher.log
 import ch.hippmann.androidpublisher.publisher.PlayStore
 import ch.hippmann.androidpublisher.publisher.Track
 import ch.hippmann.androidpublisher.publisher.VersionCodeGenerator
 import com.android.build.gradle.AppExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
 import java.io.File
@@ -40,20 +40,18 @@ class AndroidPublisherPlugin : Plugin<Project> {
     ) {
         project.afterEvaluate {
             android.applicationVariants.forEach { applicationVariant ->
-                var generateVersionCodeTask: Task? = null
                 if (androidpublisher.enableGenerateVersionCode.get()) {
-                    generateVersionCodeTask =
-                        project.tasks.create("generateVersionCodeFor${applicationVariant.name.capitalize()}") {
-                            group = TASK_GROUP
-                            doLast {
-                                VersionCodeGenerator.generateVersionCode(
-                                    applicationVariant.applicationId,
-                                    project.rootDir.absolutePath,
-                                    applicationVariant.versionCode,
-                                    androidpublisher.appVersionCodeKey.get(),
-                                    androidpublisher.credentialsJsonFile.get()
-                                )
-                            }
+                    project.tasks.register("generateVersionCodeFor${applicationVariant.name.capitalize()}") {
+                        group = TASK_GROUP
+                        doLast {
+                            VersionCodeGenerator.generateVersionCode(
+                                applicationVariant.applicationId,
+                                project.rootDir.absolutePath,
+                                applicationVariant.versionCode,
+                                androidpublisher.appVersionCodeKey.get(),
+                                androidpublisher.credentialsJsonFile.get()
+                            )
+                        }
                         }
                 }
 
@@ -61,22 +59,17 @@ class AndroidPublisherPlugin : Plugin<Project> {
                     project.tasks.register("upload${applicationVariant.name.capitalize()}To${track.capitalize()}Track") {
                         group = TASK_GROUP
                         dependsOn(project.tasks.getByName("bundle${applicationVariant.name.capitalize()}"))
-                        if (generateVersionCodeTask != null) {
-                            dependsOn(generateVersionCodeTask)
-                        }
 
                         doLast {
-                            println("INFO: outputFiles: ${applicationVariant.outputs.toList()}")
-                            val outputFile = applicationVariant
-                                .outputs
-                                .filter {
-                                    it.outputFile.extension == "aar" && it.outputFile.name.contains(
-                                        "release",
-                                        true
-                                    )
-                                } //TODO: find a better way to get the release bundle
-                                .map { it.outputFile }
-                                .first()
+                            val bundleOutputDir =
+                                File(project.buildDir.absolutePath + "/outputs/bundle/${applicationVariant.name}")
+                            log("OutputDir content: ${bundleOutputDir.listFiles()?.map { it.absolutePath }}")
+                            val outputFile = //TODO: find a better way to get the release bundle
+                                bundleOutputDir
+                                    .walkTopDown()
+                                    .toList()
+                                    .first { it.extension == "aab" }
+                            log("Got bundle: $outputFile")
 
                             PlayStore.upload(
                                 outputFile,

@@ -40,10 +40,11 @@ Travis example:
 ```yaml
 deploy:
   - provider: script
-    script: ./gradlew -DkeyPassword="$SIGNATURE_KEY_PASSWORD" -DstorePassword="$SIGNATURE_STORE_PASSWORD" generateVersionCodeForRelease uploadReleaseToInternalTrack
+    script: ./gradlew generateVersionCodeForRelease && ./gradlew -DkeyPassword="$SIGNATURE_KEY_PASSWORD" -DstorePassword="$SIGNATURE_STORE_PASSWORD" uploadReleaseToInternalTrack
     on:
       tags: true
 ```  
+(Note the separation of `generateVersionCodeForRelease` and `uploadReleaseToInternalTrack` into two separate gradle commands. This is necessary for gradle to pick up the changed versionCode!)
 
 Gradle example:
 ```shell script
