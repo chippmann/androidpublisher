@@ -58,7 +58,7 @@ Gradle example:
  
  ## Development
  To be able to test the plugin with a local build, one needs to execute `publishToMavenLocal` and add the following to 
- the top of the `settings.gradle.kts` file:  
+ the top of the app's `settings.gradle.kts` file:  
  
  *Gradle KTS:*
  ```kotlin
