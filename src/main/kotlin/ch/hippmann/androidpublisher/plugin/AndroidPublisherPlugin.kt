@@ -66,7 +66,7 @@ class AndroidPublisherPlugin : Plugin<Project> {
                         }
 
                         doLast {
-                            println("INFO: outputFiles: ${applicationVariant.outputs}")
+                            println("INFO: outputFiles: ${applicationVariant.outputs.toList()}")
                             val outputFile = applicationVariant
                                 .outputs
                                 .filter {
