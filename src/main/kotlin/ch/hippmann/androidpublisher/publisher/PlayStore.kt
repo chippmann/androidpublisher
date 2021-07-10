@@ -1,6 +1,7 @@
 package ch.hippmann.androidpublisher.publisher
 
 import ch.hippmann.androidpublisher.log
+import com.android.build.gradle.api.ApplicationVariant
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
@@ -20,7 +21,8 @@ object PlayStore {
     private const val MIME_TYPE_APP_BUNDLE_FILE = "application/octet-stream"
 
     internal fun upload(
-        appBundleFile: File,
+        applicationVariant: ApplicationVariant,
+        outputFolder: File,
         packageName: String,
         track: String,
         uploadMappingFile: Boolean,
@@ -35,6 +37,14 @@ object PlayStore {
             .execute()
             .log { appEdit -> "Created AppEdit with id: ${appEdit.id}" }
 
+        val bundleOutputDir = outputFolder.resolve("bundle/${applicationVariant.name}")
+        log("OutputDir content: ${bundleOutputDir.listFiles()?.map { it.absolutePath }}")
+        val appBundleFile = //TODO: find a better way to get the release bundle
+            bundleOutputDir
+                .walkTopDown()
+                .toList()
+                .first { it.extension == "aab" }
+
         log("Uploading $appBundleFile...")
         val appBundleUpload = edits.bundles()
             .upload(packageName, appEdit.id, FileContent(MIME_TYPE_APP_BUNDLE_FILE, appBundleFile))
@@ -43,10 +53,11 @@ object PlayStore {
 
         if (uploadMappingFile) {
             log("Uploading deobfuscation mapping file...")
-            val mappingFile =
-                requireNotNull(appBundleFile.parentFile.walkTopDown().firstOrNull { it.name == "mapping.txt" }) {
-                    "No mapping file found in ${appBundleFile.parentFile} for bundle: ${appBundleFile.name}"
-                }
+            val mappingFilesDir = outputFolder.resolve("mapping/${applicationVariant.name}")
+            val mappingFile = File(mappingFilesDir, "mapping.txt")
+            require(mappingFile.exists()) {
+                "No mapping file found in ${mappingFilesDir.absolutePath} for applicationVariant: ${applicationVariant.name}"
+            }
             val mappingFileContent = FileContent(MIME_TYPE_MAPPING_FILE, mappingFile)
 
             edits.deobfuscationfiles()
