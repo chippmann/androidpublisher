@@ -1,6 +1,5 @@
 package ch.hippmann.androidpublisher.plugin
 
-import ch.hippmann.androidpublisher.log
 import ch.hippmann.androidpublisher.publisher.PlayStore
 import ch.hippmann.androidpublisher.publisher.Track
 import ch.hippmann.androidpublisher.publisher.VersionCodeGenerator
@@ -61,18 +60,9 @@ class AndroidPublisherPlugin : Plugin<Project> {
                         dependsOn(project.tasks.getByName("bundle${applicationVariant.name.capitalize()}"))
 
                         doLast {
-                            val bundleOutputDir =
-                                File(project.buildDir.absolutePath + "/outputs/bundle/${applicationVariant.name}")
-                            log("OutputDir content: ${bundleOutputDir.listFiles()?.map { it.absolutePath }}")
-                            val outputFile = //TODO: find a better way to get the release bundle
-                                bundleOutputDir
-                                    .walkTopDown()
-                                    .toList()
-                                    .first { it.extension == "aab" }
-                            log("Got bundle: $outputFile")
-
                             PlayStore.upload(
-                                outputFile,
+                                applicationVariant,
+                                project.buildDir.resolve("outputs"),
                                 applicationVariant.applicationId,
                                 track,
                                 applicationVariant.buildType.isMinifyEnabled,
