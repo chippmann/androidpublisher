@@ -2,15 +2,17 @@
 
 > Note: This guide is simplified. For further information look at Google's documentation or find dedicated examples online.
 
-A Google Service Account must be created / configured in a Google Cloud Project. There are two approaches to achieve
-this.
+## 1. Create / Select a Google Cloud Project
 
-## Create a new Google Cloud Project directly from the Google Play Console
+A Google Service Account must be created / configured in a Google Cloud Project. There are two approaches to achieve
+this, select either 1.1. or 1.2.
+
+### 1.1. Create a new Google Cloud Project directly from the Google Play Console
 
 1. Go to [Google Play Console](https://play.google.com/apps/publish)
 2. Go to "Setup > API Access" and select the option to create a project for you.
 
-## Alternative: Use an existing Google Cloud Project or create a Google Cloud Project manually.
+### 1.2. Use an existing Google Cloud Project or create a Google Cloud Project manually.
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com)
 2. Create a new project or select an existing one
@@ -21,7 +23,7 @@ this.
 5. Go to [Google Play Console](https://play.google.com/apps/publish)
 6. Go to "Setup > API Access" and link the desired Google Cloud Project.
 
-## Create a Service Account
+## 2. Create a Service Account
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com)
 2. Go to "IAM & Admin > Service Accounts" and select "Create Service Account"
@@ -38,7 +40,7 @@ this.
 
    ![](docresources/createKeys.png)
 
-## Enable GooglePlayConsole API access for the service account:
+## 3. Enable GooglePlayConsole API access for the service account:
 
 1. Go to [Google Play Console](https://play.google.com/apps/publish)
 2. Go to "Setup > API Access" and select "Grant Access" option for the previously created account.
