@@ -133,3 +133,14 @@ gradle-app.setting
 **/build/
 
 # End of https://www.gitignore.io/api/gradle,kotlin,intellij+all
+
+# Edit at https://www.toptal.com/developers/gitignore?templates=jenv
+
+### JEnv ###
+# JEnv local Java version configuration file
+.java-version
+
+# Used by previous versions of JEnv
+.jenv-version
+
+# End of https://www.toptal.com/developers/gitignore/api/jenv
