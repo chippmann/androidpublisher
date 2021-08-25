@@ -51,13 +51,16 @@ class AndroidPublisherPlugin : Plugin<Project> {
                                 androidpublisher.credentialsJsonFile.get()
                             )
                         }
-                        }
+                    }
                 }
 
                 Track.values().map { it.toString() }.forEach { track ->
                     project.tasks.register("upload${applicationVariant.name.capitalize()}To${track.capitalize()}Track") {
                         group = TASK_GROUP
-                        dependsOn(project.tasks.getByName("bundle${applicationVariant.name.capitalize()}"))
+
+                        if (androidpublisher.createBundleIfNotExists.getOrElse(true)) {
+                            dependsOn(project.tasks.getByName("bundle${applicationVariant.name.capitalize()}"))
+                        }
 
                         doLast {
                             PlayStore.upload(
