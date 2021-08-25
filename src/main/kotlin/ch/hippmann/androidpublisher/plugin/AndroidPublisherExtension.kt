@@ -10,4 +10,5 @@ open class AndroidPublisherExtension(objects: ObjectFactory) {
     val shouldThrowIfNoReleaseNotes = objects.property<Boolean>()
     val enableGenerateVersionCode = objects.property<Boolean>()
     val appVersionCodeKey = objects.property<String>()
+    val createBundleIfNotExists = objects.property<Boolean>()
 }

@@ -19,6 +19,7 @@ androidpublisher {
     shouldThrowIfNoReleaseNotes = true // <- optional, defaults true: defines whether an exception is thrown or not if no releaseNotes for the appVersionCode is found
     enableGenerateVersionCode = true // <- optional, defaults true: defines if the appVersionCode should be generated (read below)
     appVersionCodeKey = "yourCustomKey" // <- optional, defaults "appVersionCode": key under which the app's version code is stored in the gradle.properties file
+    createBundleIfNotExists = true // <- optional, defaults true: defines if the upload task should create a bundle in case it does not exist yet
 } 
 ```
 
