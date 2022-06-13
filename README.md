@@ -14,7 +14,7 @@ Minimal gradle configuration:
 ```kotlin
 plugins {
     id("com.android.application")
-    id("ch.hippmann.androidpublisher") version "0.2.0"
+    id("ch.hippmann.androidpublisher") version "0.3.0"
 }
 
 androidpublisher {
