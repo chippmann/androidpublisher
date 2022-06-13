@@ -144,3 +144,5 @@ gradle-app.setting
 .jenv-version
 
 # End of https://www.toptal.com/developers/gitignore/api/jenv
+/play-store-credentials.json
+/local.properties

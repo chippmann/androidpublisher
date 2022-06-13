@@ -29,6 +29,7 @@ class AndroidPublisherPlugin : Plugin<Project> {
             shouldThrowIfNoReleaseNotes.set(true)
             enableGenerateVersionCode.set(true)
             appVersionCodeKey.set("appVersionCode")
+            createBundleIfNotExists.set(true)
         }
     }
 
@@ -73,6 +74,31 @@ class AndroidPublisherPlugin : Plugin<Project> {
                                 androidpublisher.releaseNotesFile.get(),
                                 applicationVariant.versionCode,
                                 androidpublisher.shouldThrowIfNoReleaseNotes.get()
+                            )
+                        }
+                    }
+                }
+
+                androidpublisher.customTrackConfiguration.customTracks.forEach { customTrack ->
+                    val cleanedTrackId = customTrack.trackId.replace(" ", "").capitalize()
+                    project.tasks.register("upload${applicationVariant.name.capitalize()}To${cleanedTrackId}Track") {
+                        group = TASK_GROUP
+
+                        if (customTrack.createBundleIfNotExists ?: androidpublisher.createBundleIfNotExists.getOrElse(true)) {
+                            dependsOn(project.tasks.getByName("bundle${applicationVariant.name.capitalize()}"))
+                        }
+
+                        doLast {
+                            PlayStore.upload(
+                                applicationVariant,
+                                project.buildDir.resolve("outputs"),
+                                applicationVariant.applicationId,
+                                customTrack.trackId,
+                                applicationVariant.buildType.isMinifyEnabled,
+                                androidpublisher.credentialsJsonFile.get(),
+                                customTrack.releaseNotesFile ?: androidpublisher.releaseNotesFile.get(),
+                                applicationVariant.versionCode,
+                                customTrack.shouldThrowIfNoReleaseNotes ?: androidpublisher.shouldThrowIfNoReleaseNotes.get()
                             )
                         }
                     }
