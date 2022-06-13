@@ -18,9 +18,8 @@ class CustomTrackConfiguration {
 
 @CustomTrackDslMarker
 data class CustomTrack(
-    val trackId: String
-) {
-    var releaseNotesFile: File? = null
-    var shouldThrowIfNoReleaseNotes: Boolean? = null
+    val trackId: String,
+    var releaseNotesFile: File? = null,
+    var shouldThrowIfNoReleaseNotes: Boolean? = null,
     var createBundleIfNotExists: Boolean? = null
-}
+)
