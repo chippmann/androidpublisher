@@ -1,19 +1,21 @@
 package ch.hippmann.androidpublisher.publisher
 
 import ch.hippmann.androidpublisher.log
-import com.android.build.gradle.api.ApplicationVariant
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.FileContent
 import com.google.api.client.http.HttpRequestInitializer
-import com.google.api.client.json.jackson2.JacksonFactory
+import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.androidpublisher.AndroidPublisher
 import com.google.api.services.androidpublisher.AndroidPublisherScopes
 import com.google.api.services.androidpublisher.model.LocalizedText
 import com.google.api.services.androidpublisher.model.Track
 import com.google.api.services.androidpublisher.model.TrackRelease
+import com.google.auth.http.HttpCredentialsAdapter
+import com.google.auth.oauth2.GoogleCredentials
 import java.io.File
+import kotlin.time.Duration.Companion.minutes
+
 
 // https://developers.google.com/android-publisher/api-ref/
 object PlayStore {
@@ -21,7 +23,7 @@ object PlayStore {
     private const val MIME_TYPE_APP_BUNDLE_FILE = "application/octet-stream"
 
     internal fun upload(
-        applicationVariant: ApplicationVariant,
+        applicationName: String,
         outputFolder: File,
         packageName: String,
         track: String,
@@ -37,7 +39,7 @@ object PlayStore {
             .execute()
             .log { appEdit -> "Created AppEdit with id: ${appEdit.id}" }
 
-        val bundleOutputDir = outputFolder.resolve("bundle/${applicationVariant.name}")
+        val bundleOutputDir = outputFolder.resolve("bundle/$applicationName")
         log("OutputDir content: ${bundleOutputDir.listFiles()?.map { it.absolutePath }}")
         val appBundleFile = //TODO: find a better way to get the release bundle
             bundleOutputDir
@@ -53,10 +55,10 @@ object PlayStore {
 
         if (uploadMappingFile) {
             log("Uploading deobfuscation mapping file...")
-            val mappingFilesDir = outputFolder.resolve("mapping/${applicationVariant.name}")
+            val mappingFilesDir = outputFolder.resolve("mapping/$applicationName")
             val mappingFile = File(mappingFilesDir, "mapping.txt")
             require(mappingFile.exists()) {
-                "No mapping file found in ${mappingFilesDir.absolutePath} for applicationVariant: ${applicationVariant.name}"
+                "No mapping file found in ${mappingFilesDir.absolutePath} for applicationVariant: $applicationName"
             }
             val mappingFileContent = FileContent(MIME_TYPE_MAPPING_FILE, mappingFile)
 
@@ -114,12 +116,14 @@ object PlayStore {
 
     private fun getAndroidPublisher(credentialsFile: File): AndroidPublisher {
         val newTrustedTransport = GoogleNetHttpTransport.newTrustedTransport()
-        val credential = GoogleCredential.fromStream(credentialsFile.inputStream())
-            .createScoped(listOf(AndroidPublisherScopes.ANDROIDPUBLISHER)) //TODO: replace with https://github.com/googleapis/google-auth-library-java
+        val credential = GoogleCredentials.fromStream(credentialsFile.inputStream())
+            .createScoped(listOf(AndroidPublisherScopes.ANDROIDPUBLISHER))
+        val requestInitializer: HttpRequestInitializer = HttpCredentialsAdapter(credential)
+
         return AndroidPublisher.Builder(
             newTrustedTransport,
-            JacksonFactory.getDefaultInstance(),
-            setHttpTimeout(credential)
+            GsonFactory.getDefaultInstance(),
+            setHttpTimeout(requestInitializer)
         )
             .setApplicationName("androidpublisher")
             .build()
@@ -127,11 +131,11 @@ object PlayStore {
 
     //increase timeout for uploading aab files to 2 mins according to
     //https://developers.google.com/android-publisher/api-ref/edits/bundles/upload
-    private fun setHttpTimeout(requestInitializer: HttpRequestInitializer): HttpRequestInitializer? {
+    private fun setHttpTimeout(requestInitializer: HttpRequestInitializer): HttpRequestInitializer {
         return HttpRequestInitializer { httpRequest ->
             requestInitializer.initialize(httpRequest)
-            httpRequest.connectTimeout = 2 * 60000 // 2 minutes connect timeout
-            httpRequest.readTimeout = 2 * 60000 // 2 minutes read timeout
+            httpRequest.connectTimeout = 2.minutes.inWholeMilliseconds.toInt()
+            httpRequest.readTimeout = 2.minutes.inWholeMilliseconds.toInt()
         }
     }
 

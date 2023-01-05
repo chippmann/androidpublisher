@@ -7,6 +7,6 @@ enum class Track {
     PRODUCTION;
 
     override fun toString(): String {
-        return this.name.toLowerCase()
+        return this.name.lowercase()
     }
 }
