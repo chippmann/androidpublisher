@@ -2,16 +2,16 @@ package ch.hippmann.androidpublisher.plugin
 
 import ch.hippmann.androidpublisher.plugin.customtrack.CustomTrackConfiguration
 import org.gradle.api.model.ObjectFactory
-import org.gradle.kotlin.dsl.property
+import org.gradle.api.provider.Property
 import java.io.File
 
 open class AndroidPublisherExtension(objects: ObjectFactory) {
-    val credentialsJsonFile = objects.property<File>()
-    val releaseNotesFile = objects.property<File>()
-    val shouldThrowIfNoReleaseNotes = objects.property<Boolean>()
-    val enableGenerateVersionCode = objects.property<Boolean>()
-    val appVersionCodeKey = objects.property<String>()
-    val createBundleIfNotExists = objects.property<Boolean>()
+    val credentialsJsonFile: Property<File> = objects.property(File::class.java)
+    val releaseNotesFile: Property<File> = objects.property(File::class.java)
+    val shouldThrowIfNoReleaseNotes: Property<Boolean> = objects.property(Boolean::class.java)
+    val enableGenerateVersionCode: Property<Boolean> = objects.property(Boolean::class.java)
+    val appVersionCodeKey: Property<String> = objects.property(String::class.java)
+    val createBundleIfNotExists: Property<Boolean> = objects.property(Boolean::class.java)
 
     val customTrackConfiguration = CustomTrackConfiguration()
     fun customTracks(block: CustomTrackConfiguration.() -> Unit) {
