@@ -20,6 +20,7 @@ androidpublisher {
     enableGenerateVersionCode = true // <- optional, defaults true: defines if the appVersionCode should be generated (read below)
     appVersionCodeKey = "yourCustomKey" // <- optional, defaults "appVersionCode": key under which the app's version code is stored in the gradle.properties file
     createBundleIfNotExists = true // <- optional, defaults true: defines if the upload task should create a bundle in case it does not exist yet
+    trackReleaseStatus = "completed" // <- optional, default "completed": defines the status of the track you upload to, see https://developers.google.com/android-publisher/api-ref/rest/v3/edits.tracks#status
 
     customTracks { // <- optional: lets you define custom tracks to generate deployment tasks for
      track("My custom track") // <- optional: defines a custom track named "My custom track" (same name as you gave it in the playstore) with the configuration applied above
