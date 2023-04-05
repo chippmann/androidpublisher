@@ -31,8 +31,9 @@ object PlayStore {
         credentialsFile: File,
         releaseNotesFile: File,
         versionCode: Int,
-        shouldThrowIfNoReleaseNotes: Boolean
-    ) {
+        shouldThrowIfNoReleaseNotes: Boolean,
+        trackReleaseStatus: String,
+        ) {
         val edits = getAndroidPublisher(credentialsFile).Edits()
         val appEdit = edits
             .insert(packageName, null)
@@ -77,7 +78,7 @@ object PlayStore {
         log("Updating track $track...")
         val trackRelease = TrackRelease().apply {
             versionCodes = listOf(appBundleUpload.versionCode).map { it.toLong() }
-            status = "completed"
+            status = trackReleaseStatus
             releaseNotes = getReleaseNotesFromProject(releaseNotesFile, versionCode, shouldThrowIfNoReleaseNotes)
         }
 

@@ -12,6 +12,10 @@ open class AndroidPublisherExtension(objects: ObjectFactory) {
     val enableGenerateVersionCode: Property<Boolean> = objects.property(Boolean::class.java)
     val appVersionCodeKey: Property<String> = objects.property(String::class.java)
     val createBundleIfNotExists: Property<Boolean> = objects.property(Boolean::class.java)
+     /**
+     * https://developers.google.com/android-publisher/api-ref/rest/v3/edits.tracks#status
+     */
+    val trackReleaseStatus: Property<String> = objects.property(String::class.java)
 
     val customTrackConfiguration = CustomTrackConfiguration()
     fun customTracks(block: CustomTrackConfiguration.() -> Unit) {

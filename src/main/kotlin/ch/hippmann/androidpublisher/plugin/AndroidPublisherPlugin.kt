@@ -32,6 +32,7 @@ class AndroidPublisherPlugin : Plugin<Project> {
             enableGenerateVersionCode.set(true)
             appVersionCodeKey.set("appVersionCode")
             createBundleIfNotExists.set(true)
+            trackReleaseStatus.set("completed")
         }
     }
 
@@ -75,7 +76,8 @@ class AndroidPublisherPlugin : Plugin<Project> {
                                 androidpublisher.credentialsJsonFile.get(),
                                 androidpublisher.releaseNotesFile.get(),
                                 applicationVariant.versionCode,
-                                androidpublisher.shouldThrowIfNoReleaseNotes.get()
+                                androidpublisher.shouldThrowIfNoReleaseNotes.get(),
+                                androidpublisher.trackReleaseStatus.get(),
                             )
                         }
                     }
@@ -100,7 +102,8 @@ class AndroidPublisherPlugin : Plugin<Project> {
                                 androidpublisher.credentialsJsonFile.get(),
                                 customTrack.releaseNotesFile ?: androidpublisher.releaseNotesFile.get(),
                                 applicationVariant.versionCode,
-                                customTrack.shouldThrowIfNoReleaseNotes ?: androidpublisher.shouldThrowIfNoReleaseNotes.get()
+                                customTrack.shouldThrowIfNoReleaseNotes ?: androidpublisher.shouldThrowIfNoReleaseNotes.get(),
+                                androidpublisher.trackReleaseStatus.get(),
                             )
                         }
                     }
