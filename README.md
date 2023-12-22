@@ -14,11 +14,17 @@ Minimal gradle configuration:
 ```kotlin
 plugins {
     id("com.android.application")
-    id("ch.hippmann.androidpublisher") version "0.3.1"
+    id("ch.hippmann.androidpublisher")
 }
 
 androidpublisher {
     credentialsJsonFile = File("path/to/your/service/account/credentials.json")
+}
+```
+*Root `build.gradle.kts`:*
+```kotlin
+plugins {
+    id("ch.hippmann.androidpublisher") version "0.3.2" apply false
 }
 ```
 
@@ -55,51 +61,3 @@ Gradle example:
  - Only one versionCode for all app variants supported
  
  These limitations might get addressed in future versions
- 
- ## Development
- To be able to test the plugin with a local build, one needs to execute `publishToMavenLocal` and add the following to 
- the top of the app's `settings.gradle.kts` file:  
- 
- *Gradle KTS:*
- ```kotlin
- // without this doing:
- //  plugin { id("ch.hippmann.androidpublisher") version "0.0.1-SNAPSHOT" }
- // won't work  as gradle does not know how to map the plugin id to an actual artifact.
- // this is only required when trying out local builds. Comment this out when trying out a plugin published
- // in the gradle plugin portal.
- pluginManagement {
-     repositories {
-         mavenLocal()
-         jcenter()
-         gradlePluginPortal()
-     }
- 
-     resolutionStrategy.eachPlugin {
-         when (requested.id.id) {
-             "ch.hippmann.androidpublisher" -> useModule("ch.hippmann.androidpublisher:${requested.version}")
-         }
-     }
- }
-
-```
-*Gradle groovy:*
-```groovy
- // without this doing:
- //  plugin { id "ch.hippmann.androidpublisher" version "0.0.1-SNAPSHOT" }
- // won't work  as gradle does not know how to map the plugin id to an actual artifact.
- // this is only required when trying out local builds. Comment this out when trying out a plugin published
- // in the gradle plugin portal.
-pluginManagement {
-    repositories {
-        mavenLocal()
-        jcenter()
-        gradlePluginPortal()
-    }
-
-    resolutionStrategy.eachPlugin {
-        if (requested.id.id == "ch.hippmann.androidpublisher") {
-            useModule("ch.hippmann:androidpublisher:" + requested.version)
-        }
-    }
-}
-```

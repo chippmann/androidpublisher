@@ -1,14 +1,14 @@
 plugins {
     // https://kotlinlang.org/docs/releases.html
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm") version "1.9.21"
     `java-gradle-plugin`
     `maven-publish`
     // https://plugins.gradle.org/plugin/com.gradle.plugin-publish
-    id("com.gradle.plugin-publish") version "1.1.0"
+    id("com.gradle.plugin-publish") version "1.2.1"
 }
 
 group = "ch.hippmann"
-version = "0.3.1"
+version = "0.3.2"
 
 repositories {
     mavenLocal()
@@ -36,20 +36,21 @@ dependencies {
     implementation(kotlin("gradle-plugin"))
     implementation(kotlin("gradle-plugin-api"))
     // https://developer.android.com/studio/releases/gradle-plugin
-    compileOnly("com.android.tools.build:gradle:7.3.0")
+    compileOnly("com.android.tools.build:gradle:8.2.0")
 
     // https://search.maven.org/artifact/com.google.apis/google-api-services-androidpublisher
-    implementation("com.google.apis:google-api-services-androidpublisher:v3-rev20221108-2.0.0")
+    implementation("com.google.apis:google-api-services-androidpublisher:v3-rev20231115-2.0.0")
+
+    // TODO: remove once com.google.apis:google-api-services-androidpublisher:v3-rev20231115-2.0.0 is updated
+    // needed because of a security vulnerability or the guava version defined in com.google.apis:google-api-services-androidpublisher:v3-rev20231115-2.0.0
+    implementation("com.google.guava:guava:33.0.0-jre")
 
     // Required to read the credentials from the credentials json file. Library suggested in the corresponding deprecation notes of google-api-services-androidpublisher
     // https://github.com/googleapis/google-auth-library-java/releases
-    implementation("com.google.auth:google-auth-library-oauth2-http:1.14.0")
-
-    // TODO: remove once a new version of com.google.apis:google-api-services-androidpublisher is out. This is here to override the requested version of the dependency as the requested version (1.11) has a security vulnerability: Cxeb68d52e-5509 (https://devhub.checkmarx.com/cve-details/Cxeb68d52e-5509/) 3.7 Exposure of Sensitive Information to an Unauthorized Actor vulnerability pending CVSS allocation
-    implementation("commons-codec:commons-codec:1.15")
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.20.0")
 
     // https://github.com/doyaaaaaken/kotlin-csv/releases
-    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.7.0")
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.2")
 }
 
 tasks {

@@ -43,13 +43,13 @@ this, select either 1.1. or 1.2.
 ## 3. Enable GooglePlayConsole API access for the service account:
 
 1. Go to [Google Play Console](https://play.google.com/apps/publish)
-2. Go to "Setup > API Access" and select "Grant Access" option for the previously created account.
+2. Go to "Users and permissions > Users" and click on your service account
 
    > If the user does not show up in the list of service accounts, it probably doesn't have a role assigned in
-   > the Google Cloud Project. Assign it a (temporary) role and to fix this problem.
+   > the Google Cloud Project. Assign it a (temporary) role to fix this problem.
    > Alternatively: Get the service account's e-mail address directly from the Google Cloud Console
    > and add it manually to the project by going to "Users and permissions > Invite new users".
-
+   
 3. Grant the necessary permissions to the service account, depending on your needs. Check the "Release" permissions and
    select the ones you would like to grant to the service account. It is recommended to grant only the permissions you
    absolutely need for the API upload to work. Google likes to rename the permissions from time to time, therefore we
