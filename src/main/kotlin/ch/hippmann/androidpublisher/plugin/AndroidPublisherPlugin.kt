@@ -32,6 +32,7 @@ class AndroidPublisherPlugin : Plugin<Project> {
             enableGenerateVersionCode.set(true)
             appVersionCodeKey.set("appVersionCode")
             createBundleIfNotExists.set(true)
+            inAppUpdatePriorityProvider = { null }
         }
     }
 
@@ -47,11 +48,11 @@ class AndroidPublisherPlugin : Plugin<Project> {
                         task.group = TASK_GROUP
                         task.doLast {
                             VersionCodeGenerator.generateVersionCode(
-                                applicationVariant.applicationId,
-                                project.rootDir.absolutePath,
-                                applicationVariant.versionCode,
-                                androidpublisher.appVersionCodeKey.get(),
-                                androidpublisher.credentialsJsonFile.get()
+                                packageName = applicationVariant.applicationId,
+                                baseFolder = project.rootDir.absolutePath,
+                                gradleVersionCode = applicationVariant.versionCode,
+                                appVersionCodeKey = androidpublisher.appVersionCodeKey.get(),
+                                credentialsFile = androidpublisher.credentialsJsonFile.get()
                             )
                         }
                     }
@@ -67,15 +68,16 @@ class AndroidPublisherPlugin : Plugin<Project> {
 
                         task.doLast {
                             PlayStore.upload(
-                                applicationVariant.name,
-                                project.buildDir.resolve("outputs"),
-                                applicationVariant.applicationId,
-                                track,
-                                applicationVariant.buildType.isMinifyEnabled,
-                                androidpublisher.credentialsJsonFile.get(),
-                                androidpublisher.releaseNotesFile.get(),
-                                applicationVariant.versionCode,
-                                androidpublisher.shouldThrowIfNoReleaseNotes.get()
+                                applicationName = applicationVariant.name,
+                                outputFolder = project.layout.buildDirectory.asFile.get().resolve("outputs"),
+                                packageName = applicationVariant.applicationId,
+                                track = track,
+                                uploadMappingFile = applicationVariant.buildType.isMinifyEnabled,
+                                credentialsFile = androidpublisher.credentialsJsonFile.get(),
+                                releaseNotesFile = androidpublisher.releaseNotesFile.get(),
+                                versionCode = applicationVariant.versionCode,
+                                shouldThrowIfNoReleaseNotes = androidpublisher.shouldThrowIfNoReleaseNotes.get(),
+                                inAppUpdatePriorityProvider = androidpublisher.inAppUpdatePriorityProvider,
                             )
                         }
                     }
@@ -92,15 +94,16 @@ class AndroidPublisherPlugin : Plugin<Project> {
 
                         task.doLast {
                             PlayStore.upload(
-                                applicationVariant.name,
-                                project.buildDir.resolve("outputs"),
-                                applicationVariant.applicationId,
-                                customTrack.trackId,
-                                applicationVariant.buildType.isMinifyEnabled,
-                                androidpublisher.credentialsJsonFile.get(),
-                                customTrack.releaseNotesFile ?: androidpublisher.releaseNotesFile.get(),
-                                applicationVariant.versionCode,
-                                customTrack.shouldThrowIfNoReleaseNotes ?: androidpublisher.shouldThrowIfNoReleaseNotes.get()
+                                applicationName = applicationVariant.name,
+                                outputFolder = project.buildDir.resolve("outputs"),
+                                packageName = applicationVariant.applicationId,
+                                track = customTrack.trackId,
+                                uploadMappingFile = applicationVariant.buildType.isMinifyEnabled,
+                                credentialsFile = androidpublisher.credentialsJsonFile.get(),
+                                releaseNotesFile = customTrack.releaseNotesFile ?: androidpublisher.releaseNotesFile.get(),
+                                versionCode = applicationVariant.versionCode,
+                                shouldThrowIfNoReleaseNotes = customTrack.shouldThrowIfNoReleaseNotes ?: androidpublisher.shouldThrowIfNoReleaseNotes.get(),
+                                inAppUpdatePriorityProvider = androidpublisher.inAppUpdatePriorityProvider,
                             )
                         }
                     }

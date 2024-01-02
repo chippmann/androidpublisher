@@ -13,6 +13,8 @@ open class AndroidPublisherExtension(objects: ObjectFactory) {
     val appVersionCodeKey: Property<String> = objects.property(String::class.java)
     val createBundleIfNotExists: Property<Boolean> = objects.property(Boolean::class.java)
 
+    var inAppUpdatePriorityProvider: () -> Int? = { null }
+
     val customTrackConfiguration = CustomTrackConfiguration()
     fun customTracks(block: CustomTrackConfiguration.() -> Unit) {
         block(customTrackConfiguration)

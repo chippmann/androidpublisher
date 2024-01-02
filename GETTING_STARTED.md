@@ -29,6 +29,8 @@ androidpublisher {
       createBundleIfNotExists = false // optional: overrides the option "createBundleIfNotExists" for this track specifically
      }
     }
+ 
+    inAppUpdatePriorityProvider = { 5 } // optional: define an in app update priority for this release
 } 
 ```
 

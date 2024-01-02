@@ -31,7 +31,8 @@ object PlayStore {
         credentialsFile: File,
         releaseNotesFile: File,
         versionCode: Int,
-        shouldThrowIfNoReleaseNotes: Boolean
+        shouldThrowIfNoReleaseNotes: Boolean,
+        inAppUpdatePriorityProvider: () -> Int?,
     ) {
         val edits = getAndroidPublisher(credentialsFile).Edits()
         val appEdit = edits
@@ -79,6 +80,16 @@ object PlayStore {
             versionCodes = listOf(appBundleUpload.versionCode).map { it.toLong() }
             status = "completed"
             releaseNotes = getReleaseNotesFromProject(releaseNotesFile, versionCode, shouldThrowIfNoReleaseNotes)
+
+            inAppUpdatePriorityProvider()?.let {
+                require((0..5).contains(it)) {
+                    "inAppUpdatePriority not between 0 and 5. Got value $it"
+                }
+                log("Setting inAppUpdatePriority to $it")
+                inAppUpdatePriority = it
+            } ?: run {
+                log("No inAppUpdatePriority provided. Defaulting to 0")
+            }
         }
 
         val trackModel = Track().apply {

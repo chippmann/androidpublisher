@@ -24,7 +24,7 @@ androidpublisher {
 *Root `build.gradle.kts`:*
 ```kotlin
 plugins {
-    id("ch.hippmann.androidpublisher") version "0.3.2" apply false
+    id("ch.hippmann.androidpublisher") version "0.3.3" apply false
 }
 ```
 
